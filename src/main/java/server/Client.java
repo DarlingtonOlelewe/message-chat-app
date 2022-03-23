@@ -10,6 +10,7 @@ public class Client {
     private BufferedWriter writer;
     private BufferedReader reader;
     private String userName;
+    private volatile boolean isOnline;
 
     public Client(Socket socket, String userName){
         try {
@@ -17,6 +18,7 @@ public class Client {
             this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.userName = userName;
+            this.isOnline = true;
         }catch (IOException e){
             closeEverything(socket,reader,writer);
         }
@@ -30,11 +32,15 @@ public class Client {
 
             Scanner input = new Scanner(System.in);
 
-            while(socket.isConnected()){
+            while(isOnline){
                 String messageTosend = input.nextLine();
                 writer.write(userName+": "+messageTosend);
                 writer.newLine();
                 writer.flush();
+                if(messageTosend.equalsIgnoreCase("exit")){
+                    closeEverything(socket,reader,writer);
+                    isOnline = false;
+                }
             }
         }catch (IOException e){
             closeEverything(socket,reader,writer);
@@ -46,10 +52,15 @@ public class Client {
             public void run() {
                 String messageFromGroupChat;
 
-                while (socket.isConnected()){
+                while (isOnline){
                     try{
                         messageFromGroupChat = reader.readLine();
-                        System.out.println(messageFromGroupChat);
+                        if(messageFromGroupChat == null){
+                            isOnline = false;
+                            break;
+                        }else{
+                            System.out.println(messageFromGroupChat);
+                        }
                     }catch (IOException e){
                         closeEverything(socket,reader,writer);
                     }
@@ -74,13 +85,5 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        Scanner input = new Scanner(System.in);
-        System.out.println("Enter your username ");
-        String username = input.nextLine();
-        Socket socket = new Socket("localhost",1234);
-        Client client = new Client(socket,username);
-        client.listenForMessage();
-        client.sendMessage();
-    }
+
 }

@@ -16,6 +16,7 @@ public class ClientHandler implements Runnable{
             this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientName = reader.readLine();
+
             clientHandlers.add(this);
             broadCast("Server: "+clientName+" has joined the Chat");
         }catch (IOException e){
@@ -29,8 +30,18 @@ public class ClientHandler implements Runnable{
         while(socket.isConnected()){
             try {
                 messageFromClient = reader.readLine();
-                broadCast(messageFromClient);
+
+                if(messageFromClient.endsWith("exit")){
+                    broadCast(clientName+" => has left the chat");
+                    closeEverything(socket,reader,writer);
+                    //removeClientHandler();
+                    break;
+                }else{
+                    broadCast(messageFromClient);
+                }
+
             }catch (IOException e){
+                removeClientHandler();
                 closeEverything(socket,reader,writer);
                 break;
             }
@@ -46,6 +57,7 @@ public class ClientHandler implements Runnable{
                     clientHandler.writer.newLine();
                     clientHandler.writer.flush();
                 }
+
             }catch (IOException e){
                 closeEverything(socket,reader,writer);
             }
@@ -56,6 +68,7 @@ public class ClientHandler implements Runnable{
     public void removeClientHandler(){
         clientHandlers.remove(this);
         broadCast("Server: "+clientName+" has left the chat");
+
     }
 
     public void closeEverything(Socket socket, BufferedReader reader, BufferedWriter writer){

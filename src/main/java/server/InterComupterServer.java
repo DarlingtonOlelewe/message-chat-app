@@ -24,7 +24,8 @@ public class InterComupterServer {
             }
 
         }catch (IOException e){
-            e.printStackTrace();
+            closeServerSocket();
+//            e.printStackTrace();
         }
     }
 
@@ -38,8 +39,5 @@ public class InterComupterServer {
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        InterComupterServer interComupterServer = new InterComupterServer(1234);
-        interComupterServer.startServer();
-    }
+
 }
