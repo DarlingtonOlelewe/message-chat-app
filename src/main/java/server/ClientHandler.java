@@ -31,7 +31,7 @@ public class ClientHandler implements Runnable{
             try {
                 messageFromClient = reader.readLine();
 
-                if(messageFromClient.endsWith("exit")){
+                if(messageFromClient == null || messageFromClient.endsWith("exit")){
                     broadCast(clientName+" => has left the chat");
                     closeEverything(socket,reader,writer);
                     //removeClientHandler();

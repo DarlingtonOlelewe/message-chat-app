@@ -37,9 +37,10 @@ public class Client {
                 writer.write(userName+": "+messageTosend);
                 writer.newLine();
                 writer.flush();
-                if(messageTosend.equalsIgnoreCase("exit")){
-                    closeEverything(socket,reader,writer);
+                if(messageTosend == null || messageTosend.equalsIgnoreCase("exit")){
                     isOnline = false;
+                    closeEverything(socket,reader,writer);
+
                 }
             }
         }catch (IOException e){
