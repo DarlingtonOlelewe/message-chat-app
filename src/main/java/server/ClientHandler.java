@@ -31,13 +31,11 @@ public class ClientHandler implements Runnable{
             try {
                 messageFromClient = reader.readLine();
 
-                if(messageFromClient == null || messageFromClient.endsWith("exit")){
-                    broadCast(clientName+" => has left the chat");
+                if(messageFromClient == null || messageFromClient.equalsIgnoreCase("exit")){
                     closeEverything(socket,reader,writer);
-                    //removeClientHandler();
                     break;
                 }else{
-                    broadCast(messageFromClient);
+                    broadCast(clientName+": "+messageFromClient);
                 }
 
             }catch (IOException e){

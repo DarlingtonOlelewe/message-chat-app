@@ -34,7 +34,7 @@ public class Client {
 
             while(isOnline){
                 String messageTosend = input.nextLine();
-                writer.write(userName+": "+messageTosend);
+                writer.write(messageTosend);
                 writer.newLine();
                 writer.flush();
                 if(messageTosend == null || messageTosend.equalsIgnoreCase("exit")){
